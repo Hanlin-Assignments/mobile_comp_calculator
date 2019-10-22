@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     // ! Only allow a single dot (when lastDot is true)
     var lastDot: Boolean = false
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -39,8 +40,13 @@ class MainActivity : AppCompatActivity() {
             textInput.text = (view as Button).text
             stateError = false
         } else {
-            // If not, already there is a valid expression so append to it
-            textInput.append((view as Button).text)
+            val txt = textInput.text.toString()
+            if (txt == "0") {
+                textInput.text = (view as Button).text
+            } else {
+                // If not, already there is a valid expression so append to it
+                textInput.append((view as Button).text)
+            }
         }
         // Set the flag
         lastNumeric = true
@@ -78,6 +84,22 @@ class MainActivity : AppCompatActivity() {
         lastNumeric = false
         stateError = false
         lastDot = false
+
+    }
+
+
+    fun onDelete(view: View) {
+
+        if(!stateError){
+            // Read the expression
+            val txt = textInput.text.toString()
+            if (txt.length >=1 ) {
+                textInput.text = txt.substring(0, txt.length - 1);
+            };
+            if (txt.length <1 ) {
+                textInput.text = "0";
+            }
+        }
 
     }
 
