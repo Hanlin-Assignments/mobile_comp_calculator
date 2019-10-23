@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Calculator</string>
+    <string name="app_name">Hanlin\'s Calculator</string>
     <string name="zero">0</string>
     <string name="one">1</string>
     <string name="two">2</string>
@@ -15,7 +15,7 @@
     <string name="minus">-</string>
     <string name="multiply">*</string>
     <string name="divide">/</string>
-    <string name="sign">-/+</string>
+    <string name="sign">+/-</string>
     <string name="equal">=</string>
     <string name="clear">AC</string>
     <string name="delete">DEL</string>
