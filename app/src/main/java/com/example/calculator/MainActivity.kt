@@ -10,17 +10,16 @@ import net.objecthunter.exp4j.ExpressionBuilder
 
 
 class MainActivity : AppCompatActivity() {
-
-    // ! Dynamically append the input and output text value in the TextView
+    //* ! Dynamically append the input and output text value in the TextView
     lateinit var textInput: TextView
 
-    // ! Indicate the last input is a number or not
+    //* ! Indicate the last input is a number or not
     var  lastNumeric: Boolean = false
 
-    // ! Indicate if the current state is error or not
+    //* ! Indicate if the current state is error or not
     var stateError: Boolean = false
 
-    // ! Only allow a single dot (when lastDot is true)
+    //* ! Only allow a single dot (when lastDot is true)
     var lastDot: Boolean = false
 
 
@@ -32,7 +31,7 @@ class MainActivity : AppCompatActivity() {
 
 
     /**
-     * Append the Button.text to the TextView
+     * ! Append the Button.text to the TextView
      */
     fun onDigit(view: View) {
         if (stateError) {
@@ -53,7 +52,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Append . to the TextView
+     * ! Append . to the TextView
      */
     fun onDecimalPoint(view: View) {
         if (lastNumeric && !stateError && !lastDot) {
@@ -65,7 +64,7 @@ class MainActivity : AppCompatActivity() {
 
 
     /**
-     * Append +,-,*,/ operators to the TextView
+     * ! Append +,-,*,/ operators to the TextView
      */
     fun onOperator(view: View) {
         if (lastNumeric && !stateError) {
@@ -77,7 +76,7 @@ class MainActivity : AppCompatActivity() {
 
 
     /**
-     * Clear the TextView
+     * ! Clear the TextView
      */
     fun onClear(view: View) {
         this.textInput.text = ""
@@ -88,15 +87,18 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    /**
+     * !  A "backspace" and will remove the last character on the screen
+     */
     fun onDelete(view: View) {
 
         if(!stateError){
             // Read the expression
             val txt = textInput.text.toString()
-            if (txt.length >=1 ) {
+            if (txt.length > 1 ) {
                 textInput.text = txt.substring(0, txt.length - 1);
             };
-            if (txt.length <1 ) {
+            if (txt.length <= 1 ) {
                 textInput.text = "0";
             }
         }
@@ -104,7 +106,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Calculate the output using Exp4j
+     * ! Calculate the output using Exp4j
      */
     fun onEqual(view: View) {
         // If the current state is error, nothing to do.
