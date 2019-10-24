@@ -22,6 +22,8 @@ class MainActivity : AppCompatActivity() {
     //* ! Only allow a single dot (when lastDot is true)
     var lastDot: Boolean = false
 
+    //* ! Flag for the sign, indicate if current sign is negative
+    var isNegative = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,18 +93,58 @@ class MainActivity : AppCompatActivity() {
      * !  A "backspace" and will remove the last character on the screen
      */
     fun onDelete(view: View) {
-
+        // If the current state is error, nothing to do.
         if(!stateError){
             // Read the expression
             val txt = textInput.text.toString()
             if (txt.length > 1 ) {
-                textInput.text = txt.substring(0, txt.length - 1);
-            };
+                textInput.text = txt.substring(0, txt.length - 1)
+                val isLastCharDigit = textInput.text.last().isDigit()
+                lastNumeric = isLastCharDigit
+                val lastChar = textInput.text.last()
+                lastDot = lastChar == '.'
+            }
             if (txt.length <= 1 ) {
-                textInput.text = "0";
+                textInput.text = "0"
+                lastNumeric = true
+                lastDot = false
+                isNegative = false
             }
         }
 
+    }
+
+    /**
+     * ! Add a sign on the current input number
+     */
+    fun onSign(view: View) {
+        // If the current state is error, nothing to do.
+        if(!stateError) {
+            val digitRegex = Regex("([0-9]+\\.)?[0-9]+")
+            val negativeDigitRegex = Regex("\\(-([0-9]+\\.)?[0-9]+\\)")
+
+            val txt = textInput.text.toString()
+            val digitSq = digitRegex.findAll(txt)
+            val digitList = digitSq.map { it.value }.toList()
+            if (digitList.size == 1 && digitList[0] != "0") {
+                if (!isNegative) {
+                    val oldValue = digitList[0]
+                    val newValue = "-" + digitList[0]
+                    textInput.text = txt.replace(oldValue, newValue)
+                    isNegative = true
+                } else {
+                    val oldValue = "-" + digitList[0]
+                    val newValue = digitList[0]
+                    textInput.text = txt.replace(oldValue, newValue)
+                    isNegative = false
+                }
+            }
+
+            if (digitList.size > 1) {
+                textInput.text = digitList[digitList.size-1]
+            }
+
+        }
     }
 
     /**
@@ -114,6 +156,7 @@ class MainActivity : AppCompatActivity() {
         if (lastNumeric && !stateError) {
             // Read the expression
             val txt = textInput.text.toString()
+
             // Create an Expression (A class from exp4j library)
             val expression = ExpressionBuilder(txt).build()
             try {
