@@ -60,8 +60,6 @@ class MainActivity : AppCompatActivity() {
             } else {
                 if (isInBrackets && txt[txt.lastIndex] == ')')
                 {
-                    // Read the expression
-                    val txt = textInput.text.toString()
                     // If text length reaches the maximum, then it does not allow append
                     if (txt.length == getString(R.string.max_length).toInt())
                     {
@@ -116,7 +114,12 @@ class MainActivity : AppCompatActivity() {
                 isLastOperator = true
                 isLastNumeric = false
             }
-        }
+        } else if (!(textInput.text.last() != '+' && textInput.text.last() != '-'
+                     && textInput.text.last() != '*' && textInput.text.last() != '/')
+                  ){
+                    val txt = textInput.text.toString()
+                    textInput.text = txt.substring(0, txt.length-1) + (view as Button).text
+               }
     }
 
     /**
