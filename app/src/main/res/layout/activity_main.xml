@@ -17,7 +17,7 @@
         android:background="#ffffff"
         android:id="@+id/textInput"
         android:gravity="end|center_vertical"
-        android:maxLength="12"
+        android:maxLength="@string/max_length"
         android:layout_marginLeft="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
