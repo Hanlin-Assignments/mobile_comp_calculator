@@ -6,6 +6,7 @@
 
 package com.example.calculator
 
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -36,6 +37,9 @@ class MainActivity : AppCompatActivity() {
 
     //* ! Flag indicates if there is an existing operator
     var isLastOperator: Boolean = false
+
+    //* ! Flag indicates if the text is a calculated result
+    var isCalculated: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,6 +72,11 @@ class MainActivity : AppCompatActivity() {
                         textInput.text = txt.substring(0, txt.length - 1) +
                                 (view as Button).text.toString() + ")"
                     }
+                } else if (isCalculated) {
+                    // If the text is a calculated result.
+                    // onClicking a digit will clear the textView and append the digit
+                    onClear(view)
+                    textInput.text = (view as Button).text
                 } else textInput.append((view as Button).text)
             }
         }
@@ -79,7 +88,7 @@ class MainActivity : AppCompatActivity() {
      * ! Append . to the TextView
      */
     fun onDecimalPoint(view: View) {
-        if (isLastNumeric && !isStateError && !isLastDot) {
+        if (isLastNumeric && !isStateError && !isLastDot && !isCalculated) {
             if (isInBrackets) {
                 // Read the expression
                 val txt = textInput.text.toString()
@@ -89,9 +98,7 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     textInput.text = txt.substring(0, txt.length - 1) + "." + ")"
                 }
-            } else {
-                textInput.append(".")
-            }
+            } else textInput.append(".")
             isLastNumeric = false
             isLastDot = true
         }
@@ -104,21 +111,21 @@ class MainActivity : AppCompatActivity() {
         if (isLastNumeric && !isStateError) {
             if (!isLastOperator) {
                 textInput.append((view as Button).text)
-                // Reset flags
-                isLastNumeric = false
-                isLastDot = false
-                isLastOperator = true
             } else {
                 onEqual(view)
                 textInput.append((view as Button).text)
-                isLastOperator = true
-                isLastNumeric = false
             }
+            // Reset flags
+            isLastDot = false
+            isLastOperator = true
+            isLastNumeric = false
+            isCalculated = false
         } else if (!(textInput.text.last() != '+' && textInput.text.last() != '-'
                      && textInput.text.last() != '*' && textInput.text.last() != '/')
                   ){
                     val txt = textInput.text.toString()
                     textInput.text = txt.substring(0, txt.length-1) + (view as Button).text
+                    isCalculated = false
                }
     }
 
@@ -134,6 +141,7 @@ class MainActivity : AppCompatActivity() {
         isNegative = false
         isInBrackets = false
         isLastOperator = false
+        isCalculated = false
     }
 
     /**
@@ -170,7 +178,16 @@ class MainActivity : AppCompatActivity() {
                     if (textInput.text.last() == '.') { isLastDot = false }
                     if (!(textInput.text.last() != '+' && textInput.text.last() != '-'
                           && textInput.text.last() != '*' && textInput.text.last() != '/')
-                       ) { isLastOperator = false }
+                       ) {
+                            isLastOperator = false
+                            // To decide if the last number has dot or not
+                            val digitRegex = Regex("([0-9]+\\.)?[0-9]+")
+                            val dotRegex = Regex("\\.")
+                            val digitSq = digitRegex.findAll(txt)
+                            val digitList = digitSq.map { it.value }.toList()
+                            val lastNumber = digitList[digitList.size - 1]
+                            isLastDot = dotRegex.containsMatchIn(lastNumber)
+                    }
                     textInput.text = txt.substring(0, txt.length - 1)
                     isLastNumeric = textInput.text.last().isDigit()
                 }
@@ -181,8 +198,8 @@ class MainActivity : AppCompatActivity() {
                 isNegative = false
                 isLastOperator = false
             }
+            isCalculated = false
         }
-
     }
 
     /**
@@ -317,13 +334,14 @@ class MainActivity : AppCompatActivity() {
             // Create an Expression (A class from exp4j library)
             val expression = ExpressionBuilder(txt).build()
             try {
-                // Calculate the result and display
-                val result = expression.evaluate()
-                isNegative = result < 0.0 // If result is less than 0, then set to negative
-                textInput.text = result.toString()
-                isLastDot = true // Result contains a dot
+                // Calculate the result and display, and format to a 2-decimal string
+                val result =  "%.2f".format(expression.evaluate())
+                isNegative = result.toDouble() < 0.0 // If result is less than 0, then set to negative
+                textInput.text = result
+                isLastDot = true // Result has a dot
                 isInBrackets = false // Result does not contain brackets
                 isLastOperator = false // Reset flag
+                isCalculated = true
             } catch (ex: ArithmeticException) {
                 // Display an error message
                 textInput.text = "Error"
@@ -335,6 +353,7 @@ class MainActivity : AppCompatActivity() {
                 isNegative = false
                 isInBrackets = false
                 isLastOperator = false
+                isCalculated = false
             }
         }
     }
