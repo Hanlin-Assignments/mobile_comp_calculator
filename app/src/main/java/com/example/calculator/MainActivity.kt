@@ -12,6 +12,8 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 
+// Need to import the 3rd party lib: exp4j
+// URL: https://www.objecthunter.net/exp4j/index.html
 import net.objecthunter.exp4j.ExpressionBuilder
 
 
@@ -204,9 +206,12 @@ class MainActivity : AppCompatActivity() {
     /**
      * ! Process Replacement function (is used by replaceLast)
      *   Copy and Paste Kotlin's source code from original Regex class
-     *   Because the Regex class has method "replaceFirst" function but no "replaceLast" function
-     *   I need to use part of its code to write a new "replaceLast" for the "+/-" button functionality
-     *   URL: https://github.com/JetBrains/kotlin-native/blob/master/runtime/src/main/kotlin/kotlin/text/Regex.kt
+     *   Because the Regex class has method "replaceFirst" function
+     *     but no "replaceLast" function
+     *   I need to use a part of its code
+     *     to write a new "replaceLast" for the "+/-" button functionality
+     *   URL: https://github.com/JetBrains/kotlin-native/blob/master/runtime/src/main/kotlin/
+     *              kotlin/text/Regex.kt
      *   Line #: 188
      */
     fun processReplacement(match: MatchResult, replacement: String): String {
@@ -253,7 +258,8 @@ class MainActivity : AppCompatActivity() {
     /**
      * ! Replace last occurance
      *   This is a modification of the "replaceFirst" from Kotlin's Regex class
-     *   URL: https://github.com/JetBrains/kotlin-native/blob/master/runtime/src/main/kotlin/kotlin/text/Regex.kt
+     *   URL: https://github.com/JetBrains/kotlin-native/blob/master/runtime/src/main/kotlin/
+     *              kotlin/text/Regex.kt
      *   Line #: 260
      */
     fun replaceLast(regex: Regex, input: CharSequence, replacement: String): String {
@@ -335,7 +341,7 @@ class MainActivity : AppCompatActivity() {
             try {
                 // Calculate the result and display, and format to a 2-decimal string
                 val result =  "%.2f".format(expression.evaluate())
-                isNegative = result.toDouble() < 0.0 // If result is less than 0, then set to negative
+                isNegative = result.toDouble() < 0.0 // If result < 0, then set to negative
                 textInput.text = result
                 isLastDot = true // Result has a dot
                 isInBrackets = false // Result does not contain brackets
